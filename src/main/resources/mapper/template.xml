@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>   
+    <!DOCTYPE mapper   
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhuzi.mybatis.mapper.TemplateMapper">
+	
+	<insert id="insertOne" >
+	    <selectKey resultType="java.lang.Integer" keyProperty="id"	order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+        	insert into ${table_name}(id<include refid="base.insertField"></include>)
+        values(#{id}<include refid="base.insertFieldValue"></include>)
+	</insert>
+	
+	<select id="select" resultType="java.util.HashMap">
+		select 
+		<if test="select_field == null">
+			*
+		</if>
+		<if test="select_field != null">
+			${select_field}
+		</if>
+		 from ${table_name}
+		<include refid="base.orderAndLimit"></include>
+	</select>
+    
+   <select id="select2" resultType="com.zhuzi.mybatis.bean.TestBean">
+		select * from ${table_name}
+		<include refid="base.orderAndLimit"></include>
+		<!-- <if test="includeSelectField == null">
+			${select_field}
+		</if>
+		<if test="include_select_field ！= null">
+			<include refid="${include_select_field}" />
+		</if> -->
+	</select>
+	
+</mapper>   

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="debug">
+    <appenders>   
+    	<Console name="Console" target="SYSTEM_OUT">  
+            <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>  
+            <PatternLayout pattern="%d\t%-5p\t[%c:%L]\t%m%n"/>  
+        </Console>
+    </appenders>  
+      
+    <loggers>  
+        <root level="debug">
+        	<AppenderRef  ref="Console" /> 
+        </root>
+    </loggers> 
+</configuration>  
