@@ -94,8 +94,14 @@ public class MybatisTemplateImpl implements MybatisTemplate{
 	
 	@Override
 	public <T> List<T> select(Map<String, Object> map, Class<T> c) {
+		if(map == null || c == null) {
+			return null;
+		}
 		if(map.get(MybatisXmlKeyConstant.TABLE_SELECT_FIELD.getName()) == null) {
 			map.put(MybatisXmlKeyConstant.TABLE_SELECT_FIELD.getName(), ClassToMapUtil.getTableSelectField(c));
+		}
+		if(map.get(MybatisXmlKeyConstant.TABLE_NAME.getName()) == null) {
+			map.put(MybatisXmlKeyConstant.TABLE_NAME.getName(), ClassToMapUtil.getTableName(c));
 		}
 		List<Map<String, ?>> list = mapper.select(map);
 		return MapToBeanUtil.toList(list, c);

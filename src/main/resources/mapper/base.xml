@@ -52,12 +52,42 @@
 	<sql id="whereField">
 		where 1 = 1
 		<include refid="base.whereEqualField"></include>
+		<include refid="base.whereNotEqualField"></include>
+		<include refid="base.whereRightLikeField"></include>
+		<include refid="base.whereInField"></include>
 	</sql>
 
 	<sql id="whereEqualField">
 		<if test="where_equal_field != null">
 			<foreach collection="where_equal_field" index="key" item="item">
 				and ${key} = #{item}
+			</foreach>
+		</if>
+	</sql>
+	
+	<sql id="whereNotEqualField">
+		<if test="where_not_equal_field != null">
+			<foreach collection="where_not_equal_field" index="key" item="item">
+				and ${key} != #{item}
+			</foreach>
+		</if>
+	</sql>
+	
+	<sql id="whereRightLikeField">
+		<if test="where_right_like_field != null">
+			<foreach collection="where_right_like_field" index="key" item="item">
+				and ${key} like CONCAT('', #{item}, '%')
+			</foreach>
+		</if>
+	</sql>
+	
+	<sql id="whereInField">
+		<if test="where_in_field != null">
+			<foreach collection="where_in_field" index="key" item="item">
+				and ${key} in 
+				<foreach collection="item" index="key" item="id" open="(" separator="," close=")">
+					#{id}
+				</foreach>
 			</foreach>
 		</if>
 	</sql>
