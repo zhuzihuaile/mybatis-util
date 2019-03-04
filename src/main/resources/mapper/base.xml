@@ -4,28 +4,70 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="base">
-	
+
 	<sql id="insertField">
-		<if test="name != null">, name</if>
+		<if test="insert_field != null">
+			<foreach collection="insert_field" index="key" item="item" separator=",">
+				${key}
+			</foreach>
+		</if>
 	</sql>
-    <sql id="insertFieldValue">
-		<if test="name != null">, #{name}</if>
+	<sql id="insertFieldValue">
+		<if test="insert_field != null">
+			<foreach collection="insert_field" index="key" item="item" separator=",">
+				#{item}
+			</foreach>
+		</if>
 	</sql>
-   
-   <sql id="orderAndLimit">
+
+	<sql id="orderAndLimit">
 		<if test="orderBy != null">
-            order by ${orderBy.orderByField} ${orderBy.orderByType}
-        </if>
-        <if test="limit != null">
-            limit
-            <if test="offest != null">
-                #{start},
-            </if>
-            <if test="offest == null">
-                0,
-            </if>
-            #{limit}
-        </if>
-   </sql>
-	
+			order by ${orderBy.orderByField} ${orderBy.orderByType}
+		</if>
+		<if test="limit != null">
+			limit
+			<if test="offest != null">
+				#{start},
+			</if>
+			<if test="offest == null">
+				0,
+			</if>
+			#{limit}
+		</if>
+	</sql>
+
+	<sql id="selectField">
+		<if test="includeSelectField == null">
+			<if test="select_field == null">
+				*
+			</if>
+			<if test="select_field != null">
+				${select_field}
+			</if>
+		</if>
+		<!-- <if test="include_select_field != null"> <include refid="${include_select_field}" 
+			/> </if> -->
+	</sql>
+
+	<sql id="whereField">
+		where 1 = 1
+		<include refid="base.whereEqualField"></include>
+	</sql>
+
+	<sql id="whereEqualField">
+		<if test="where_equal_field != null">
+			<foreach collection="where_equal_field" index="key" item="item">
+				and ${key} = #{item}
+			</foreach>
+		</if>
+	</sql>
+
+	<sql id="setField">
+		<if test="update_set_field != null">
+			set 
+			<foreach collection="update_set_field" index="key" item="item" separator=",">
+				${key} = #{item}
+			</foreach>
+		</if>
+	</sql>
 </mapper>   

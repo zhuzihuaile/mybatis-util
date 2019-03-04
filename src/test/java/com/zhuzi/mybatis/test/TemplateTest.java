@@ -1,15 +1,16 @@
 package com.zhuzi.mybatis.test;
 
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zhuzi.mybatis.ApplicationTests;
 import com.zhuzi.mybatis.bean.TestBean;
 import com.zhuzi.mybatis.template.MybatisTemplate;
-
 
 public class TemplateTest extends ApplicationTests{
 
@@ -17,8 +18,30 @@ public class TemplateTest extends ApplicationTests{
 	private MybatisTemplate template;
 	
 	@Test
+	@Transactional
 	public void insertOne() {
-		assertTrue(template.insertOne(new TestBean()));
+		TestBean bean = new TestBean();
+		bean.setName("name");
+		assertTrue(template.insert(bean));
+		assertNotNull(bean.getId());
+	}
+	
+	@Test
+	@Transactional
+	public void update() {
+		TestBean bean = new TestBean();
+		bean.setName("name");
+//		bean.setId(81);
+		assertNotEquals(template.update(bean), 0);
+	}
+	
+	@Test
+	@Transactional
+	public void delete() {
+		TestBean bean = new TestBean();
+		bean.setName("name");
+		bean.setId(81);
+		assertNotEquals(template.delete(bean), 0);
 	}
 	
 	@Test
