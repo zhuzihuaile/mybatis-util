@@ -46,6 +46,8 @@ public class TemplateTest extends ApplicationTests{
 	
 	@Test
 	public void selectOne() {
-		assertNotNull(template.selectOne(TestBean.class));
+		TestBean bean = template.selectOne(TestBean.class);
+		assertNotNull(bean);
+		assertNotNull(bean.getId());
 	}
 }
