@@ -20,4 +20,23 @@ public class Criteria {
 		return new RightLikeCriteria(key, value);
 	}
 	
+	public static BetweenCriteria between(String key, Object gte, Object lt) {
+		return new BetweenCriteria(key, gte, lt);
+	}
+	
+	public static GtCriteria gt(String key, Object value) {
+		return new GtCriteria(key, value);
+	}
+	
+	public static GteCriteria gte(String key, Object value) {
+		return new GteCriteria(key, value);
+	}
+	
+	public static LtCriteria lt(String key, Object value) {
+		return new LtCriteria(key, value);
+	}
+	
+	public static LteCriteria lte(String key, Object value) {
+		return new LteCriteria(key, value);
+	}
 }

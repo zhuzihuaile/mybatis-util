@@ -2,16 +2,24 @@ package com.zhuzi.mybatis.core.query;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Maps;
 import com.zhuzi.mybatis.constant.MybatisXmlKeyConstant;
 
 public class Query {
+	private Logger log = LoggerFactory.getLogger(getClass());
 	private Map<String, Object> equal = null;
 	private Map<String, Object> notEqual = null;
 	private Map<String, Object> in = null;
 	private Map<String, Object> rightLike = null;
+	private Map<String, Object> gt = null;
+	private Map<String, Object> gte = null;
+	private Map<String, Object> lt = null;
+	private Map<String, Object> lte = null;
 	
-	public Query addCriteria(Criteria criteria) {
+	public Query addCriteria(BaseCriteria criteria) {
 		if(criteria instanceof EqualCriteria) {
 			if(equal == null) {
 				equal = Maps.newHashMap();
@@ -36,6 +44,40 @@ public class Query {
 			}
 			RightLikeCriteria c = (RightLikeCriteria) criteria;
 			rightLike.put(c.getKey(), c.getValue());
+		} else if(criteria instanceof BetweenCriteria) {
+			if(gte == null) {
+				gte = Maps.newHashMap();
+			}
+			if(lt == null) {
+				lt = Maps.newHashMap();
+			}
+			BetweenCriteria c = (BetweenCriteria) criteria;
+			gte.put(c.getKey(), c.getGte());
+			lt.put(c.getKey(), c.getLt());
+		} else if(criteria instanceof GtCriteria) {
+			if(gt == null) {
+				gt = Maps.newHashMap();
+			}
+			GtCriteria c = (GtCriteria) criteria;
+			gt.put(c.getKey(), c.getValue());
+		} else if(criteria instanceof GteCriteria) {
+			if(gte == null) {
+				gte = Maps.newHashMap();
+			}
+			GteCriteria c = (GteCriteria) criteria;
+			gte.put(c.getKey(), c.getValue());
+		} else if(criteria instanceof LtCriteria) {
+			if(lt == null) {
+				lt = Maps.newHashMap();
+			}
+			LtCriteria c = (LtCriteria) criteria;
+			lt.put(c.getKey(), c.getValue());
+		} else if(criteria instanceof LteCriteria) {
+			if(lte == null) {
+				lte = Maps.newHashMap();
+			}
+			LteCriteria c = (LteCriteria) criteria;
+			lte.put(c.getKey(), c.getValue());
 		}
 		return this;
 	}
@@ -59,8 +101,27 @@ public class Query {
 			map.put(MybatisXmlKeyConstant.TABLE_WHERE_RIGHT_LIKE_FIELD.getName(), rightLike);
 		}
 		
+		if(gt != null) {
+			map.put(MybatisXmlKeyConstant.TABLE_WHERE_GT_FIELD.getName(), gt);
+		}
+		
+		if(gte != null) {
+			map.put(MybatisXmlKeyConstant.TABLE_WHERE_GTE_FIELD.getName(), gte);
+		}
+		
+		if(lt != null) {
+			map.put(MybatisXmlKeyConstant.TABLE_WHERE_LT_FIELD.getName(), lt);
+		}
+		
+		if(lte != null) {
+			map.put(MybatisXmlKeyConstant.TABLE_WHERE_LTE_FIELD.getName(), lte);
+		}
+		
 		if(map.size() < 1) {
 			return null;
+		}
+		if(log.isDebugEnabled()) {
+			log.debug("map where {}", map);
 		}
 		return map;
 	}

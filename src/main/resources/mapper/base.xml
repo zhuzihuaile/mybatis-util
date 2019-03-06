@@ -55,6 +55,11 @@
 		<include refid="base.whereNotEqualField"></include>
 		<include refid="base.whereRightLikeField"></include>
 		<include refid="base.whereInField"></include>
+		
+		<include refid="base.whereGtField"></include>
+		<include refid="base.whereGteField"></include>
+		<include refid="base.whereLtField"></include>
+		<include refid="base.whereLteField"></include>
 	</sql>
 
 	<sql id="whereEqualField">
@@ -91,7 +96,48 @@
 			</foreach>
 		</if>
 	</sql>
-
+	
+	<!-- <sql id="whereBetweenField">
+		<if test="where_between_field != null">
+			<foreach collection="where_between_field" index="key" item="item">
+				and ${key} BETWEEN ${item['gte']} AND ${item['lt']}
+			</foreach>
+		</if>
+	</sql> -->
+	
+	
+	<sql id="whereGtField">
+		<if test="where_gt_field != null">
+			<foreach collection="where_gt_field" index="key" item="item">
+				and ${key} > #{item}
+			</foreach>
+		</if>
+	</sql>
+	
+	<sql id="whereGteField">
+		<if test="where_gte_field != null">
+			<foreach collection="where_gte_field" index="key" item="item">
+				and ${key} >= #{item}
+			</foreach>
+		</if>
+	</sql>
+	
+	<sql id="whereLtField">
+		<if test="where_lt_field != null">
+			<foreach collection="where_lt_field" index="key" item="item">
+				and ${key} &lt; #{item}
+			</foreach>
+		</if>
+	</sql>
+	
+	<sql id="whereLteField">
+		<if test="where_lte_field != null">
+			<foreach collection="where_lte_field" index="key" item="item">
+				and ${key} &lt;= #{item}
+			</foreach>
+		</if>
+	</sql>
+	
 	<sql id="setField">
 		<if test="update_set_field != null">
 			set 

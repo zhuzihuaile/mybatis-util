@@ -15,6 +15,14 @@ public enum MybatisXmlKeyConstant {
 	,TABLE_WHERE_IN_FIELD("where_in_field", "查询字段:IN")
 	/** 查询字段:右模糊 */
 	,TABLE_WHERE_RIGHT_LIKE_FIELD("where_right_like_field", "查询字段:右模糊")
+	/** 查询字段:大于 */
+	,TABLE_WHERE_GT_FIELD("where_gt_field", "查询字段:大于")
+	/** 查询字段:大于等于 */
+	,TABLE_WHERE_GTE_FIELD("where_gte_field", "查询字段:大于等于")
+	/** 查询字段:小于 */
+	,TABLE_WHERE_LT_FIELD("where_lt_field", "查询字段:小于")
+	/** 查询字段:小于等于 */
+	,TABLE_WHERE_LTE_FIELD("where_lte_field", "查询字段:小于等于")
 	/** set字段  */
 	,TABLE_UPDATE_SET_FIELD("update_set_field", "set字段")
 	/** 加载查询字段 */

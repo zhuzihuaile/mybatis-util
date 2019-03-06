@@ -4,7 +4,9 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,8 @@ public class TemplateTest extends ApplicationTests{
 	public void insertOne() {
 		TestBean bean = new TestBean();
 		bean.setName("name");
+		bean.setTestName("testName");
+		bean.setCreateTime(new Date());
 		assertTrue(template.insert(bean));
 		assertNotNull(bean.getId());
 	}
@@ -36,7 +40,7 @@ public class TemplateTest extends ApplicationTests{
 	public void update() {
 		TestBean bean = new TestBean();
 		bean.setName("name");
-//		bean.setId(81);
+//		bean.setId(1);
 		assertNotEquals(template.update(bean), 0);
 	}
 	
@@ -45,7 +49,7 @@ public class TemplateTest extends ApplicationTests{
 	public void delete() {
 		TestBean bean = new TestBean();
 		bean.setName("name");
-		bean.setId(81);
+		bean.setId(1);
 		assertNotEquals(template.delete(bean), 0);
 	}
 	
@@ -71,6 +75,7 @@ public class TemplateTest extends ApplicationTests{
 	public void selectEqual() {
 		Query query = new Query();
 		query.addCriteria(Criteria.equal("id", 1));
+		query.addCriteria(Criteria.equal("name", "name"));
 		List<TestBean> beans = template.select(query.getWhereMap(), TestBean.class);
 		assertNotNull(beans);
 	}
@@ -86,8 +91,19 @@ public class TemplateTest extends ApplicationTests{
 	@Test
 	public void selectRightLike() {
 		Query query = new Query();
-		query.addCriteria(Criteria.rightLike("name", "na"));
+		query.addCriteria(Criteria.rightLike("test_name", "test"));
 		List<TestBean> beans = template.select(query.getWhereMap(), TestBean.class);
+		assertNotNull(beans);
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Test
+	public void selectBetween() {
+		Query query = new Query();
+		query.addCriteria(Criteria.between("create_time", new Date(118, 01, 01), new Date(120, 01, 01)));
+		Map<String, Object> map = query.getWhereMap();
+		List<TestBean> beans = template.select(map, TestBean.class);
+		System.out.println(beans);
 		assertNotNull(beans);
 	}
 	

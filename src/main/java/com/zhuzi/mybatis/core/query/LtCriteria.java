@@ -1,8 +1,8 @@
 package com.zhuzi.mybatis.core.query;
 
-public class NotEqualCriteria extends BaseCriteria {
+public class LtCriteria extends BaseCriteria {
 	private Object value;
-	public NotEqualCriteria(String key, Object value) {
+	public LtCriteria(String key, Object value) {
 		super.key = key;
 		this.value = value;
 	}
