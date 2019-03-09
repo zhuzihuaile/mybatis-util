@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.zhuzi.mybatis.constant.MybatisXmlKeyConstant;
 import com.zhuzi.mybatis.constant.SortAndLimitConstant;
+import com.zhuzi.mybatis.constant.SortAndLimitConstant.Sort;
 import com.zhuzi.mybatis.mapper.TemplateMapper;
 import com.zhuzi.mybatis.template.MybatisTemplate;
 import com.zhuzi.mybatis.util.ClassToMapUtil;
@@ -66,32 +67,22 @@ public class MybatisTemplateImpl implements MybatisTemplate{
 	}
 	
 	@Override
-	public <T> T selectOne(T t, Class<T> c) {
-		Map<String, Object> map;
-		if(t == null) {
-			map = ClassToMapUtil.getTableMap(c);
-		} else {
-			map = ClassToMapUtil.getSelectMap(t);
-		}
-		map.putAll(SortAndLimitConstant.getSelectOne());
-		List<T> list = select(map, c);
-		if(list == null || list.size() < 1) {
-			return null;
-		}
-		return list.get(0);
-	}
-	
-	@Override
-	public <T> T selectOne(Class<T> c) {
-		return selectOne(null, c);
-	}
-	
-	@Override
 	public <T> List<?> select(Class<T> c) {
+		return select(c, null);
+	}
+	
+	@Override
+	public <T> List<?> select(Class<T> c, Sort sort) {
 		Map<String, Object> map = ClassToMapUtil.getTableMap(c);
+		return select(map, c, sort);
+	}
+
+	@Override
+	public <T> List<T> select(Map<String, Object> map, Class<T> c, SortAndLimitConstant.Sort sort) {
+		map.putAll(SortAndLimitConstant.getSelectBySort(sort));
 		return select(map, c);
 	}
-	
+
 	@Override
 	public <T> List<T> select(Map<String, Object> map, Class<T> c) {
 		if(map == null || c == null) {
@@ -103,9 +94,71 @@ public class MybatisTemplateImpl implements MybatisTemplate{
 		if(map.get(MybatisXmlKeyConstant.TABLE_NAME.getName()) == null) {
 			map.put(MybatisXmlKeyConstant.TABLE_NAME.getName(), ClassToMapUtil.getTableName(c));
 		}
+		
+		map = sortCheck(map);
+		
 		List<Map<String, ?>> list = mapper.select(map);
 		return MapToBeanUtil.toList(list, c);
 	}
-
 	
+	private Map<String, Object> sortCheck(Map<String, Object> map) {
+		Object limit = map.get(SortAndLimitConstant.LIMIT);
+		if(limit == null) {
+			map.putAll(SortAndLimitConstant.getSelectDefult());
+		} else {
+			try {
+				int l = (int) limit;
+				if(l > SortAndLimitConstant.LIMIT_MAX) {
+					map.put(SortAndLimitConstant.LIMIT, SortAndLimitConstant.LIMIT_MAX);
+				}
+			} catch (Exception e) {
+				map.put(SortAndLimitConstant.LIMIT, SortAndLimitConstant.LIMIT_DEFAULT);
+			}
+		}
+		
+		Object offset = map.get(SortAndLimitConstant.OFFSET);
+		if(limit != null) {
+			try {
+				int o = (int) offset;
+				if(o < SortAndLimitConstant.OFFSET_DEFAULT) {
+					map.put(SortAndLimitConstant.OFFSET, SortAndLimitConstant.OFFSET_DEFAULT);
+				}
+			} catch (Exception e) {
+			}
+		}
+		
+		return map;
+	}
+
+	@Override
+	public <T> T selectOne(Class<T> c) {
+		return selectOne(null, c, null);
+	}
+	
+	@Override
+	public <T> T selectOne(Class<T> c, Sort sort) {
+		return selectOne(null, c, sort);
+	}
+	
+	@Override
+	public <T> T selectOne(T t, Class<T> c) {
+		return selectOne(t, c, null);
+	}
+	
+	@Override
+	public <T> T selectOne(T t, Class<T> c, Sort sort) {
+		Map<String, Object> map;
+		if(t == null) {
+			map = ClassToMapUtil.getTableMap(c);
+		} else {
+			map = ClassToMapUtil.getSelectMap(t);
+		}
+		map.putAll(SortAndLimitConstant.getSelectBySort(sort));
+		map.putAll(SortAndLimitConstant.getSelectOne());
+		List<T> list = select(map, c);
+		if(list == null || list.size() < 1) {
+			return null;
+		}
+		return list.get(0);
+	}
 }

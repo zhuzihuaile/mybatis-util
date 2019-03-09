@@ -21,13 +21,19 @@
 	</sql>
 
 	<sql id="orderAndLimit">
-		<if test="orderBy != null">
-			order by ${orderBy.orderByField} ${orderBy.orderByType}
+		<if test="sortby != null ">
+			order by ${sortby} 
+			<if test="order != null ">
+				${order}
+			</if>
+			<if test="order == null ">
+				asc
+			</if>
 		</if>
 		<if test="limit != null">
 			limit
 			<if test="offest != null">
-				#{start},
+				#{offest},
 			</if>
 			<if test="offest == null">
 				0,

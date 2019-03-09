@@ -6,8 +6,6 @@
 <mapper namespace="com.zhuzi.mybatis.mapper.TemplateMapper">
 
 	<insert id="insertOne">
-		<!-- <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER"> 
-			SELECT LAST_INSERT_ID() </selectKey> -->
 		insert into ${table_name}(
 		<include refid="base.insertField"></include>
 		)
