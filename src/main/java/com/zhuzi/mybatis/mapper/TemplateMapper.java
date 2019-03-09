@@ -19,7 +19,5 @@ public interface TemplateMapper {
 	Integer update(Map<String, ?> map);
 	
 
-	List<?> select2(Map<String, Object> map);
-
 	
 }

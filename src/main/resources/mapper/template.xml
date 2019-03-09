@@ -39,9 +39,4 @@
 		<include refid="base.orderAndLimit"></include>
 	</select>
 
-	<select id="select2" resultType="com.zhuzi.mybatis.bean.TestBean">
-		select * from ${table_name}
-		<include refid="base.orderAndLimit"></include>
-	</select>
-
 </mapper>   

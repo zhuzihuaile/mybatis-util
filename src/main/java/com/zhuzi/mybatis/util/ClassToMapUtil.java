@@ -67,6 +67,10 @@ public class ClassToMapUtil {
 	 */
 	public static <T> Map<String, Object> getFieldMap(T t) {
 		Map<String, Object> map = Maps.newHashMap();
+		if(t == null) {
+			return map;
+		}
+		
 		Class<?> c = t.getClass();
 		Field[] fields = c.getDeclaredFields();
 		if (fields != null && fields.length > 0) {

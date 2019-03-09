@@ -88,7 +88,7 @@ public class MybatisTemplateImpl implements MybatisTemplate{
 	
 	@Override
 	public <T> List<?> select(Class<T> c) {
-		Map<String, Object> map = ClassToMapUtil.getInsertMap(c);
+		Map<String, Object> map = ClassToMapUtil.getTableMap(c);
 		return select(map, c);
 	}
 	
