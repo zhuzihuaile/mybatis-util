@@ -110,8 +110,11 @@ public class MybatisTemplateImpl implements MybatisTemplate{
 				int l = (int) limit;
 				if(l > SortAndLimitConstant.LIMIT_MAX) {
 					map.put(SortAndLimitConstant.LIMIT, SortAndLimitConstant.LIMIT_MAX);
+				} else if(l < SortAndLimitConstant.ONE) {
+					map.put(SortAndLimitConstant.LIMIT, SortAndLimitConstant.LIMIT_DEFAULT);
 				}
 			} catch (Exception e) {
+				log.error(e.getMessage());
 				map.put(SortAndLimitConstant.LIMIT, SortAndLimitConstant.LIMIT_DEFAULT);
 			}
 		}
@@ -124,6 +127,8 @@ public class MybatisTemplateImpl implements MybatisTemplate{
 					map.put(SortAndLimitConstant.OFFSET, SortAndLimitConstant.OFFSET_DEFAULT);
 				}
 			} catch (Exception e) {
+				log.error(e.getMessage());
+				map.put(SortAndLimitConstant.OFFSET, SortAndLimitConstant.OFFSET_DEFAULT);
 			}
 		}
 		
