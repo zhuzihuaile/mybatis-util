@@ -14,7 +14,7 @@ mybatis-util
 * 本项目当前支持单表操作
 * 本项目当前只支持MySql数据库
 
-测试/示例
+示例
 ------------
 可以查看：[mybatis-util-example](https://github.com/zhuzihuaile/mybatis-util-example)
 
