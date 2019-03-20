@@ -23,8 +23,12 @@ public class MapToBeanUtil {
 		Object t = null;
 		for (Map<String, ?> map : list) {
 			try {
-				t = c.newInstance();
-				populate(t, map);
+				t = baseClass(map, c);
+				
+				if(t == null) {
+					t = c.newInstance();
+					populate(t, map);
+				}
 			} catch (Exception e) {
 				log.warn(e.getMessage());
 				t = null;
@@ -35,6 +39,26 @@ public class MapToBeanUtil {
 			lists.add((T) t);
 		}
 		return lists;
+	}
+
+	private static Object baseClass(Map<String, ?> map, Class<?> c) {
+		Object t = null;
+		try {
+			Object val = map.get(map.keySet().toArray()[0]);
+			if(c == String.class) {
+				t = String.valueOf(val);
+			} else if(c == Integer.class) {
+				t = Integer.parseInt(String.valueOf(val));
+			} else if(c == Long.class) {
+				t = Long.parseLong(String.valueOf(val));
+			} else if(c == Float.class) {
+				t = Float.parseFloat(String.valueOf(val));
+			} else if(c == Double.class) {
+				t = Double.parseDouble(String.valueOf(val));
+			}
+		} catch (Exception e) {
+		}
+		return t;
 	}
 
 	public static void populate(final Object bean, final Map<String, ? extends Object> properties)

@@ -101,6 +101,16 @@ public class MybatisTemplateImpl implements MybatisTemplate{
 		return MapToBeanUtil.toList(list, c);
 	}
 	
+	@Override
+	public <T> T selectOne(Map<String, Object> map, Class<T> c) {
+		map.putAll(SortAndLimitConstant.getSelectOne());
+		List<T> list = select(map, c);
+		if(list == null || list.size() < 1) {
+			return null;
+		}
+		return list.get(0);
+	}
+	
 	private Map<String, Object> sortCheck(Map<String, Object> map) {
 		Object limit = map.get(SortAndLimitConstant.LIMIT);
 		if(limit == null) {

@@ -27,6 +27,8 @@ public interface MybatisTemplate {
 	<T> List<T> select(Map<String, Object> where, Class<T> c, Sort sort);
 	
 	<T> List<T> select(Map<String, Object> map, Class<T> c);
+
+	<T> T selectOne(Map<String, Object> map, Class<T> c);
 	
 
 }
