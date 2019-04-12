@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
+import com.zhuzi.mybatis.config.Config;
 import com.zhuzi.mybatis.constant.MybatisXmlKeyConstant;
 
 public class Query {
@@ -18,6 +19,8 @@ public class Query {
 	private Map<String, Object> gte = null;
 	private Map<String, Object> lt = null;
 	private Map<String, Object> lte = null;
+	public final static int TWO = 2;
+	public final static int ZERO = 0;
 	
 	public Query addCriteria(BaseCriteria criteria) {
 		if(criteria instanceof EqualCriteria) {
@@ -37,7 +40,11 @@ public class Query {
 				in = Maps.newHashMap();
 			}
 			InCriteria c = (InCriteria) criteria;
-			in.put(c.getKey(), c.getValue());
+			if(Config.IS_IN && c.getValue() != null && c.getValue().size() < TWO) {
+				equal.put(c.getKey(), c.getValue().get(ZERO));
+			} else {
+				in.put(c.getKey(), c.getValue());
+			}
 		} else if(criteria instanceof RightLikeCriteria) {
 			if(rightLike == null) {
 				rightLike = Maps.newHashMap();

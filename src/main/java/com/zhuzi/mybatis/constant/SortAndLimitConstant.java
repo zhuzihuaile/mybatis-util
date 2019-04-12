@@ -17,8 +17,6 @@ public class SortAndLimitConstant {
 	public final static String LIMIT = "limit";
 	public final static String SORTBY_DEFAULT = "id";
 	public final static String ORDER_DEFAULT = "desc";
-	/** 是否开启 limit offset 验证  */
-	public final static boolean isSort = true;
 	public final static int OFFSET_DEFAULT = 0;
 	public final static int LIMIT_DEFAULT = 20;
 	/** limit max */
