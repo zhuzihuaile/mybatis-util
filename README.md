@@ -4,6 +4,7 @@ mybatis-util
 简介
 ------------
 * mybatis-util是为了简化mybatis开发过程中的sql.xml的开发和维护；
+* 去XML，SQL开发和维护；
 * 本项目支持Bean对象注解，已达到增删查改的业务需求；
 * 本项目是spring boot结构
 * insert:支持自增ID；
