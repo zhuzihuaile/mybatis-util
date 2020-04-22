@@ -67,18 +67,21 @@ public class MybatisTemplateImpl implements MybatisTemplate{
 	}
 	
 	@Override
-	public <T> List<?> select(Class<T> c) {
+	public <T> List<T> select(Class<T> c) {
 		return select(c, null);
 	}
 	
 	@Override
-	public <T> List<?> select(Class<T> c, Sort sort) {
+	public <T> List<T> select(Class<T> c, Sort sort) {
 		Map<String, Object> map = ClassToMapUtil.getTableMap(c);
 		return select(map, c, sort);
 	}
 
 	@Override
 	public <T> List<T> select(Map<String, Object> map, Class<T> c, SortAndLimitConstant.Sort sort) {
+		if(map == null || c == null) {
+			return null;
+		}
 		map.putAll(SortAndLimitConstant.getSelectBySort(sort));
 		return select(map, c);
 	}
@@ -103,6 +106,9 @@ public class MybatisTemplateImpl implements MybatisTemplate{
 	
 	@Override
 	public <T> T selectOne(Map<String, Object> map, Class<T> c) {
+		if(map == null) {
+			return null;
+		}
 		map.putAll(SortAndLimitConstant.getSelectOne());
 		List<T> list = select(map, c);
 		if(list == null || list.size() < 1) {
@@ -156,24 +162,60 @@ public class MybatisTemplateImpl implements MybatisTemplate{
 	}
 	
 	@Override
-	public <T> T selectOne(T t, Class<T> c) {
-		return selectOne(t, c, null);
+	public <T> T selectOne(T t) {
+		return selectOne(t, null, null);
 	}
 	
+	private <T> T selectOne(T t, Class<T> c, Sort sort) {
+		Map<String, Object> map = getMap(t, c, sort);
+		return selectOne(map, c);
+	}
+
 	@Override
-	public <T> T selectOne(T t, Class<T> c, Sort sort) {
+	public <T> T selectOne(T t, Sort sort) {
+		return selectOne(t, null, sort);
+	}
+
+	@Override
+	public <T> List<T> select(T t, Sort sort) {
+		return select(t, null, sort);
+	}
+	
+	private <T> List<T> select(T t, Class<T> c, Sort sort) {
+		Map<String, Object> map = getMap(t, c, sort);
+		return select(map, c);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private <T> Map<String, Object> getMap(T t, Class<T> c, Sort sort) {
 		Map<String, Object> map;
+		
+		if(t == null && c == null) {
+			return null;
+		}
+		
 		if(t == null) {
 			map = ClassToMapUtil.getTableMap(c);
 		} else {
+			if(c == null) {
+				c = (Class<T>) t.getClass();
+			}
 			map = ClassToMapUtil.getSelectMap(t);
 		}
 		map.putAll(SortAndLimitConstant.getSelectBySort(sort));
-		map.putAll(SortAndLimitConstant.getSelectOne());
-		List<T> list = select(map, c);
-		if(list == null || list.size() < 1) {
+		
+		return map;
+	}
+	
+	@Override
+	public <T> List<T> select(Object obj, Sort sort, Class<T> resultClass) {
+		if(obj == null || resultClass == null) {
 			return null;
 		}
-		return list.get(0);
+		
+		Map<String, Object> map = ClassToMapUtil.getTableMap(resultClass);
+		map.putAll(ClassToMapUtil.getWhereMap(obj, false));
+		map.putAll(SortAndLimitConstant.getSelectBySort(sort));
+		return select(map, resultClass);
 	}
 }

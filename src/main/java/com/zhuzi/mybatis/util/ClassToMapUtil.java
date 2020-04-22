@@ -1,5 +1,6 @@
 package com.zhuzi.mybatis.util;
 
+import java.awt.List;
 import java.lang.reflect.Field;
 import java.util.Map;
 
@@ -48,18 +49,31 @@ public class ClassToMapUtil {
 		Map<String, Object> map = Maps.newHashMap();
 		boolean flag = exist;
 		
-		Map<String, Object> equal = getFieldMap(t);
-		if(equal.size() > 0) {
+		Map<String, Object> fieldMap = getFieldMap(t);
+		if(fieldMap.size() > 0) {
 			flag = false;
 		}
+		
+		Map<String, Object> equal = Maps.newHashMap();
+		Map<String, Object> in = Maps.newHashMap();
+		for(String key : fieldMap.keySet()) {
+			Object v = fieldMap.get(key);
+			// 判断是否为List
+			if(List.class.isAssignableFrom(v.getClass())) {
+				in.put(key, v);
+			} else {
+				equal.put(key, v);
+			}
+		}
 		map.put(MybatisXmlKeyConstant.TABLE_WHERE_EQUAL_FIELD.getName(), equal);
+		map.put(MybatisXmlKeyConstant.TABLE_WHERE_IN_FIELD.getName(), in);
 		
 		if(flag) {
 			return null;
 		}
 		return map;
 	}
-	
+
 	/**
 	 * 获取对象中非Null的字段
 	 * @param t
@@ -72,6 +86,10 @@ public class ClassToMapUtil {
 		}
 		
 		Class<?> c = t.getClass();
+		if(c.isEnum() || c.isAnnotation() || c.isArray()) {
+			log.warn("param is error");
+			return map;
+		}
 		Field[] fields = c.getDeclaredFields();
 		if (fields != null && fields.length > 0) {
 			for (Field field : fields) {

@@ -16,19 +16,30 @@ public interface MybatisTemplate {
 	
 	<T> T selectOne(Class<T> c, Sort sort);
 	
-	<T> T selectOne(T t, Class<T> c);
+	<T> T selectOne(T t);
 	
-	<T> T selectOne(T t, Class<T> c, Sort sort);
+	<T> T selectOne(T t, Sort sort);
 	
-	<T> List<?> select(Class<T> c);
+	<T> List<T> select(Class<T> c);
 	
-	<T> List<?> select(Class<T> c, Sort sort);
+	<T> List<T> select(Class<T> c, Sort sort);
+	
+	<T> List<T> select(T c, Sort sort);
 	
 	<T> List<T> select(Map<String, Object> where, Class<T> c, Sort sort);
 	
 	<T> List<T> select(Map<String, Object> map, Class<T> c);
 
 	<T> T selectOne(Map<String, Object> map, Class<T> c);
+
+	/**
+	 * 
+	 * @param selectObj 查询对象（非集合）
+	 * @param sort
+	 * @param resultClass
+	 * @return
+	 */
+	<T> List<T> select(Object selectObj, Sort sort, Class<T> resultClass);
 	
 
 }
