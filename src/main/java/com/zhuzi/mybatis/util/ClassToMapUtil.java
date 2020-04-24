@@ -8,8 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zhuzi.mybatis.annotation.TableName;
+import com.zhuzi.mybatis.annotation.query.BeanField;
 import com.zhuzi.mybatis.constant.MybatisXmlKeyConstant;
 
 public class ClassToMapUtil {
@@ -73,6 +75,92 @@ public class ClassToMapUtil {
 		}
 		return map;
 	}
+	
+	public static Map<String, Object> getWhereMapByQuery(Object obj, Class<?> beanClass) {
+		Map<String, Object> map = Maps.newHashMap();
+		
+		Map<String, Object> fieldMap = getFieldMapByQuery(obj, beanClass);
+		
+		Map<String, Object> equal = Maps.newHashMap();
+		Map<String, Object> in = Maps.newHashMap();
+		for(String key : fieldMap.keySet()) {
+			Object v = fieldMap.get(key);
+			// 判断是否为List
+			if(List.class.isAssignableFrom(v.getClass())) {
+				in.put(key, v);
+			} else {
+				equal.put(key, v);
+			}
+		}
+		map.put(MybatisXmlKeyConstant.TABLE_WHERE_EQUAL_FIELD.getName(), equal);
+		map.put(MybatisXmlKeyConstant.TABLE_WHERE_IN_FIELD.getName(), in);
+		
+		return map;
+	}
+	
+	/**
+	 * 获取查询对象中非Null的字段
+	 * @param obj
+	 * @return
+	 */
+	public static Map<String, Object> getFieldMapByQuery(Object obj, Class<?> beanClass) {
+		Map<String, Object> map = Maps.newHashMap();
+		if(obj == null) {
+			return map;
+		}
+		
+		Class<?> c = obj.getClass();
+		if(c.isEnum() || c.isAnnotation() || c.isArray() || c.isInterface()) {
+			log.warn("param is error");
+			return map;
+		}
+		
+		List<String> beanFieldNames = getFieldNameList(beanClass);
+		if(beanFieldNames == null || beanFieldNames.size() < 1) {
+			log.warn("bean class field is empty");
+			return map;
+		}
+		
+		Field[] fields = c.getDeclaredFields();
+		if (fields != null && fields.length > 0) {
+			for (Field field : fields) {
+				String name = field.getName();
+				Object object = ReflectMathodUtil.getValue(obj, name);
+				if (object == null) {
+					continue;
+				}
+				// 优先使用配置
+				String fieldName = getBeanFieldName(field);
+				if(fieldName != null) {
+					name = fieldName;
+				}
+				// 判断字段是否存在
+				if(!beanFieldNames.contains(name)) {
+					continue;
+				}
+				
+				map.put(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, name), object);
+			}
+		}
+		return map;
+	}
+
+	/**
+	 * 获取类的所有参数名
+	 * @param c
+	 * @return
+	 */
+	public static List<String> getFieldNameList(Class<?> c) {
+		List<String> list = Lists.newArrayList();
+		Field[] fields = c.getDeclaredFields();
+		if (fields != null && fields.length > 0) {
+			for (Field field : fields) {
+				String name = field.getName();
+				list.add(name);
+			}
+		}
+		return list;
+	}
 
 	/**
 	 * 获取对象中非Null的字段
@@ -86,7 +174,7 @@ public class ClassToMapUtil {
 		}
 		
 		Class<?> c = t.getClass();
-		if(c.isEnum() || c.isAnnotation() || c.isArray()) {
+		if(c.isEnum() || c.isAnnotation() || c.isArray() || c.isInterface()) {
 			log.warn("param is error");
 			return map;
 		}
@@ -120,6 +208,14 @@ public class ClassToMapUtil {
 			return null;
 		}
 		return table.name();
+	}
+	
+	public static String getBeanFieldName(Field f) {
+		BeanField bean = f.getAnnotation(BeanField.class);
+		if (bean == null) {
+			return null;
+		}
+		return bean.fieldName();
 	}
 
 	public static String getTableSelectField(Class<?> c) {

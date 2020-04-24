@@ -11,13 +11,13 @@ import com.zhuzi.mybatis.annotation.GeneratedValue;
 public class ReflectMathodUtil {
 	private ReflectMathodUtil() {}
 
-	public static <T> Object getValue(T t, String name) {
+	public static Object getValue(Object obj, String name) {
 		try {
 			if (name == null || "".equals(name.trim())) {
 				return null;
 			}
-			Method method = t.getClass().getMethod(getGetMethodName(name));
-			return method.invoke(t);
+			Method method = obj.getClass().getMethod(getGetMethodName(name));
+			return method.invoke(obj);
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 		} catch (SecurityException e) {

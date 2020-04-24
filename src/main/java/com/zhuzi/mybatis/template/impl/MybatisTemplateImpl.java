@@ -214,7 +214,7 @@ public class MybatisTemplateImpl implements MybatisTemplate{
 		}
 		
 		Map<String, Object> map = ClassToMapUtil.getTableMap(resultClass);
-		map.putAll(ClassToMapUtil.getWhereMap(obj, false));
+		map.putAll(ClassToMapUtil.getWhereMapByQuery(obj, resultClass));
 		map.putAll(SortAndLimitConstant.getSelectBySort(sort));
 		return select(map, resultClass);
 	}
