@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.zhuzi.mybatis.annotation.FieldAnalyzeHandler;
 import com.zhuzi.mybatis.annotation.TableName;
 import com.zhuzi.mybatis.annotation.query.BeanField;
 import com.zhuzi.mybatis.constant.MybatisXmlKeyConstant;
@@ -186,7 +187,20 @@ public class ClassToMapUtil {
 				if (object == null) {
 					continue;
 				}
-				map.put(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, name), object);
+				FieldAnalyzeHandler handler = field.getAnnotation(FieldAnalyzeHandler.class);
+				if(handler != null) {
+					Class<? extends AbstractFieldAnalyzeHandler<?>> handlerClass = handler.handler();
+					try {
+						String str = handlerClass.newInstance().rehandler(object);
+						map.put(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, name), str);
+					} catch (InstantiationException e) {
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					}
+				} else {
+					map.put(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, name), object);
+				}
 			}
 		}
 		return map;

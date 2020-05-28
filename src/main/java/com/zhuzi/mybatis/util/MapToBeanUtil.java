@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Lists;
+import com.zhuzi.mybatis.annotation.FieldAnalyzeHandler;
 
 public class MapToBeanUtil {
 	private static Logger log = LoggerFactory.getLogger(MapToBeanUtil.class);
@@ -24,7 +25,6 @@ public class MapToBeanUtil {
 		for (Map<String, ?> map : list) {
 			try {
 				t = baseClass(map, c);
-				
 				if(t == null) {
 					t = c.newInstance();
 					populate(t, map);
@@ -78,7 +78,19 @@ public class MapToBeanUtil {
 	                continue;
 	            }
 	            String nameLower = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name);
-	            BeanUtilsBean.getInstance().setProperty(bean, nameLower, entry.getValue());
+	            Object value = entry.getValue();
+	            try {
+	            	FieldAnalyzeHandler handler = bean.getClass().getDeclaredField(nameLower).getAnnotation(FieldAnalyzeHandler.class);
+	            	if(handler != null) {
+	            		AbstractFieldAnalyzeHandler<?> abstractHandler = handler.handler().newInstance();
+	            		value = abstractHandler.handler(value);
+	            	}
+	            } catch (NoSuchFieldException | SecurityException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+	            BeanUtilsBean.getInstance().setProperty(bean, nameLower, value);
 
 	        }
 
